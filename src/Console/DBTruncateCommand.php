@@ -1,5 +1,5 @@
 <?php
-
+namespace Amims71\DbTruncate\Console;
 
 use App\Facades\Schema;
 use Illuminate\Console\Command;
@@ -41,11 +41,10 @@ class DBTruncateCommand extends Command
         $tableNames = Schema::getConnection()->getDoctrineSchemaManager()->listTableNames();
 
         if ($this->option('except')) {
-            $except = explode(',', $this->option('except'));
-            $tableNames = $tableNames->reject(function ($table) use ($except) {
-                $this->comment('Skipping table: ' . $table);
-                return in_array($table, $except);
-            });
+            $excepts = $this->option('except');
+            $this->comment('Skipping tables: ' . $excepts);
+            $except = explode(',', $excepts);
+            $tableNames = array_diff($tableNames, $except);
         }
 
         $this->comment('Disabling foreign key checks...');
