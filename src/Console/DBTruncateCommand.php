@@ -43,21 +43,21 @@ class DBTruncateCommand extends Command
         if ($this->option('except')) {
             $except = explode(',', $this->option('except'));
             $tableNames = $tableNames->reject(function ($table) use ($except) {
-                $this->alert('Skipping table: ' . $table);
+                $this->comment('Skipping table: ' . $table);
                 return in_array($table, $except);
             });
         }
 
-        $this->alert('Disabling foreign key checks...');
+        $this->comment('Disabling foreign key checks...');
         Schema::disableForeignKeyConstraints();
 
         foreach ($tableNames as $name) {
-            $this->info('Truncating '.$name);
+            $this->comment('Truncating '.$name);
             DB::table($name)->truncate();
             $this->info('Truncated '.$name);
         }
 
-        $this->alert('Enabling foreign key checks...');
+        $this->comment('Enabling foreign key checks...');
         Schema::enableForeignKeyConstraints();
         return 1;
     }
